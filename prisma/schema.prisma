@@ -1,0 +1,102 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. DimThoiGian
+model DimThoiGian {
+  id              Int           @unique @default(autoincrement())
+  Ngay           DateTime     @id
+  NgayTrongThang Int
+  Thang          Int
+  Quy            Int
+  Nam            Int
+
+  datHang        FactDatHang[]
+  tonKho         FactTonKho[]
+}
+
+// 2. DimThanhPho
+model DimThanhPho {
+  id              Int           @unique @default(autoincrement())
+  MaThanhPho  String         @id @db.VarChar(10)
+  TenThanhPho String         @db.VarChar(100)
+  DiaChiVP    String         @db.VarChar(200)
+  Bang        String         @db.VarChar(50)
+
+  cuaHang     DimCuaHang[]
+  khachHang   DimKhachHang[]
+}
+
+// 3. DimCuaHang
+model DimCuaHang {
+  id              Int           @unique @default(autoincrement())
+  MaCuaHang    String         @id @db.VarChar(10)
+  MaThanhPho   String         @db.VarChar(10)
+  SoDienThoai  String         @db.VarChar(20)
+
+  thanhPho     DimThanhPho    @relation(fields: [MaThanhPho], references: [MaThanhPho])
+  tonKho       FactTonKho[]
+}
+
+// 4. DimKhachHang
+model DimKhachHang {
+  id              Int           @unique @default(autoincrement())
+  MaKH         String         @id @db.VarChar(10)
+  TenKH        String         @db.VarChar(100)
+  MaThanhPho   String         @db.VarChar(10)
+  LoaiKH       String         @db.VarChar(20)
+
+  thanhPho     DimThanhPho    @relation(fields: [MaThanhPho], references: [MaThanhPho])
+  datHang      FactDatHang[]
+}
+
+// 5. DimMatHang
+model DimMatHang {
+  id              Int           @unique @default(autoincrement())
+  MaMatHang    String         @id @db.VarChar(10)
+  MoTa         String         @db.VarChar(200)
+  KichCo       String         @db.VarChar(50)
+  TrongLuong   Float
+  Gia          Decimal        @db.Decimal(10, 2)
+
+  datHang      FactDatHang[]
+  tonKho       FactTonKho[]
+}
+
+// 6. FactDatHang
+model FactDatHang {
+  id              Int           @unique @default(autoincrement())
+  MaDon        String         @db.VarChar(10)
+  MaKH         String         @db.VarChar(10)
+  MaMatHang    String         @db.VarChar(10)
+  NgayDatHang  DateTime
+  SoLuongDat   Int
+  GiaDat       Decimal        @db.Decimal(10, 2)
+
+  matHang      DimMatHang     @relation(fields: [MaMatHang], references: [MaMatHang])
+  khachHang    DimKhachHang   @relation(fields: [MaKH], references: [MaKH])
+  thoiGian     DimThoiGian    @relation(fields: [NgayDatHang], references: [Ngay])
+
+  @@id([MaDon, MaMatHang])
+}
+
+// 7. FactTonKho
+model FactTonKho {
+  id              Int           @unique @default(autoincrement())
+  MaMatHang      String         @db.VarChar(10)
+  MaCuaHang      String         @db.VarChar(10)
+  Ngay           DateTime
+  SoLuongTonKho  Int
+
+  matHang        DimMatHang     @relation(fields: [MaMatHang], references: [MaMatHang])
+  cuaHang        DimCuaHang     @relation(fields: [MaCuaHang], references: [MaCuaHang])
+  thoiGian       DimThoiGian    @relation(fields: [Ngay], references: [Ngay])
+
+  @@id([MaMatHang, MaCuaHang, Ngay])
+}
