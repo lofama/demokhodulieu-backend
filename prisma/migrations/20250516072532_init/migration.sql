@@ -7,8 +7,8 @@ CREATE TABLE `DimThoiGian` (
     `Quy` INTEGER NOT NULL,
     `Nam` INTEGER NOT NULL,
 
-    UNIQUE INDEX `DimThoiGian_id_key`(`id`),
-    PRIMARY KEY (`Ngay`)
+    UNIQUE INDEX `DimThoiGian_Ngay_key`(`Ngay`),
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -19,8 +19,8 @@ CREATE TABLE `DimThanhPho` (
     `DiaChiVP` VARCHAR(200) NOT NULL,
     `Bang` VARCHAR(50) NOT NULL,
 
-    UNIQUE INDEX `DimThanhPho_id_key`(`id`),
-    PRIMARY KEY (`MaThanhPho`)
+    UNIQUE INDEX `DimThanhPho_MaThanhPho_key`(`MaThanhPho`),
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -30,8 +30,8 @@ CREATE TABLE `DimCuaHang` (
     `MaThanhPho` VARCHAR(10) NOT NULL,
     `SoDienThoai` VARCHAR(20) NOT NULL,
 
-    UNIQUE INDEX `DimCuaHang_id_key`(`id`),
-    PRIMARY KEY (`MaCuaHang`)
+    UNIQUE INDEX `DimCuaHang_MaCuaHang_key`(`MaCuaHang`),
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -42,8 +42,8 @@ CREATE TABLE `DimKhachHang` (
     `MaThanhPho` VARCHAR(10) NOT NULL,
     `LoaiKH` VARCHAR(20) NOT NULL,
 
-    UNIQUE INDEX `DimKhachHang_id_key`(`id`),
-    PRIMARY KEY (`MaKH`)
+    UNIQUE INDEX `DimKhachHang_MaKH_key`(`MaKH`),
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -55,8 +55,8 @@ CREATE TABLE `DimMatHang` (
     `TrongLuong` DOUBLE NOT NULL,
     `Gia` DECIMAL(10, 2) NOT NULL,
 
-    UNIQUE INDEX `DimMatHang_id_key`(`id`),
-    PRIMARY KEY (`MaMatHang`)
+    UNIQUE INDEX `DimMatHang_MaMatHang_key`(`MaMatHang`),
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -69,8 +69,8 @@ CREATE TABLE `FactDatHang` (
     `SoLuongDat` INTEGER NOT NULL,
     `GiaDat` DECIMAL(10, 2) NOT NULL,
 
-    UNIQUE INDEX `FactDatHang_id_key`(`id`),
-    PRIMARY KEY (`MaDon`, `MaMatHang`)
+    UNIQUE INDEX `FactDatHang_MaDon_MaMatHang_key`(`MaDon`, `MaMatHang`),
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -81,8 +81,8 @@ CREATE TABLE `FactTonKho` (
     `Ngay` DATETIME(3) NOT NULL,
     `SoLuongTonKho` INTEGER NOT NULL,
 
-    UNIQUE INDEX `FactTonKho_id_key`(`id`),
-    PRIMARY KEY (`MaMatHang`, `MaCuaHang`, `Ngay`)
+    UNIQUE INDEX `FactTonKho_MaMatHang_MaCuaHang_Ngay_key`(`MaMatHang`, `MaCuaHang`, `Ngay`),
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey

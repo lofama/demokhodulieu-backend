@@ -1,0 +1,28 @@
+-- CreateTable
+CREATE TABLE `SaleSummary` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `MaDon` VARCHAR(191) NOT NULL,
+    `MaMatHang` VARCHAR(191) NOT NULL,
+    `NgayDatHang` VARCHAR(191) NOT NULL,
+    `MaKH` VARCHAR(191) NOT NULL,
+    `TenKH` VARCHAR(191) NOT NULL,
+    `LoaiKH` VARCHAR(191) NOT NULL,
+    `TenThanhPho` VARCHAR(191) NOT NULL,
+    `MaThanhPho` VARCHAR(191) NOT NULL,
+    `Bang` VARCHAR(191) NOT NULL,
+    `DiaChiVP` VARCHAR(191) NOT NULL,
+    `MoTa` VARCHAR(191) NOT NULL,
+    `KichCo` VARCHAR(191) NOT NULL,
+    `TrongLuong` VARCHAR(191) NOT NULL,
+    `Gia` VARCHAR(191) NOT NULL,
+    `SoLuongDat` VARCHAR(191) NOT NULL,
+    `GiaDat` VARCHAR(191) NOT NULL,
+    `ThanhTien` VARCHAR(191) NOT NULL,
+    `Ngay` VARCHAR(191) NOT NULL,
+    `NgayTrongThang` VARCHAR(191) NOT NULL,
+    `Thang` VARCHAR(191) NOT NULL,
+    `Quy` VARCHAR(191) NOT NULL,
+    `Nam` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

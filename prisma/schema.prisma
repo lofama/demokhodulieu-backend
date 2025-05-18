@@ -1,6 +1,6 @@
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -8,95 +8,152 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 1. DimThoiGian
-model DimThoiGian {
-  id              Int           @unique @default(autoincrement())
-  Ngay           DateTime     @id
+model dimcuahang {
+  id          Int          @id @default(autoincrement())
+  MaCuaHang   String       @unique(map: "DimCuaHang_MaCuaHang_key") @db.VarChar(10)
+  MaThanhPho  String       @db.VarChar(10)
+  SoDienThoai String       @db.VarChar(20)
+  dimthanhpho dimthanhpho  @relation(fields: [MaThanhPho], references: [MaThanhPho], map: "DimCuaHang_MaThanhPho_fkey")
+  facttonkho  facttonkho[]
+
+  @@index([MaThanhPho], map: "DimCuaHang_MaThanhPho_fkey")
+}
+
+model dimkhachhang {
+  id          Int                 @id @default(autoincrement())
+  MaKH        String              @unique(map: "DimKhachHang_MaKH_key") @db.VarChar(10)
+  TenKH       String              @db.VarChar(100)
+  MaThanhPho  String              @db.VarChar(10)
+  LoaiKH      dimkhachhang_LoaiKH
+  dimthanhpho dimthanhpho         @relation(fields: [MaThanhPho], references: [MaThanhPho], map: "DimKhachHang_MaThanhPho_fkey")
+  factdathang factdathang[]
+
+  @@index([MaThanhPho], map: "DimKhachHang_MaThanhPho_fkey")
+}
+
+model dimmathang {
+  id          Int               @id @default(autoincrement())
+  MaMatHang   String            @unique(map: "DimMatHang_MaMatHang_key") @db.VarChar(10)
+  MoTa        String            @db.VarChar(200)
+  KichCo      dimmathang_KichCo
+  TrongLuong  Float
+  Gia         Decimal           @db.Decimal(10, 2)
+  factdathang factdathang[]
+  facttonkho  facttonkho[]
+}
+
+model dimthanhpho {
+  id           Int            @id @default(autoincrement())
+  MaThanhPho   String         @unique(map: "DimThanhPho_MaThanhPho_key") @db.VarChar(10)
+  TenThanhPho  String         @db.VarChar(100)
+  DiaChiVP     String         @db.VarChar(200)
+  Bang         String         @db.VarChar(50)
+  dimcuahang   dimcuahang[]
+  dimkhachhang dimkhachhang[]
+}
+
+model dimthoigian {
+  id             Int           @id @default(autoincrement())
+  Ngay           DateTime      @unique(map: "DimThoiGian_Ngay_key")
   NgayTrongThang Int
   Thang          Int
   Quy            Int
   Nam            Int
-
-  datHang        FactDatHang[]
-  tonKho         FactTonKho[]
+  factdathang    factdathang[]
+  facttonkho     facttonkho[]
 }
 
-// 2. DimThanhPho
-model DimThanhPho {
-  id              Int           @unique @default(autoincrement())
-  MaThanhPho  String         @id @db.VarChar(10)
-  TenThanhPho String         @db.VarChar(100)
-  DiaChiVP    String         @db.VarChar(200)
-  Bang        String         @db.VarChar(50)
-
-  cuaHang     DimCuaHang[]
-  khachHang   DimKhachHang[]
-}
-
-// 3. DimCuaHang
-model DimCuaHang {
-  id              Int           @unique @default(autoincrement())
-  MaCuaHang    String         @id @db.VarChar(10)
-  MaThanhPho   String         @db.VarChar(10)
-  SoDienThoai  String         @db.VarChar(20)
-
-  thanhPho     DimThanhPho    @relation(fields: [MaThanhPho], references: [MaThanhPho])
-  tonKho       FactTonKho[]
-}
-
-// 4. DimKhachHang
-model DimKhachHang {
-  id              Int           @unique @default(autoincrement())
-  MaKH         String         @id @db.VarChar(10)
-  TenKH        String         @db.VarChar(100)
-  MaThanhPho   String         @db.VarChar(10)
-  LoaiKH       String         @db.VarChar(20)
-
-  thanhPho     DimThanhPho    @relation(fields: [MaThanhPho], references: [MaThanhPho])
-  datHang      FactDatHang[]
-}
-
-// 5. DimMatHang
-model DimMatHang {
-  id              Int           @unique @default(autoincrement())
-  MaMatHang    String         @id @db.VarChar(10)
-  MoTa         String         @db.VarChar(200)
-  KichCo       String         @db.VarChar(50)
-  TrongLuong   Float
-  Gia          Decimal        @db.Decimal(10, 2)
-
-  datHang      FactDatHang[]
-  tonKho       FactTonKho[]
-}
-
-// 6. FactDatHang
-model FactDatHang {
-  id              Int           @unique @default(autoincrement())
-  MaDon        String         @db.VarChar(10)
-  MaKH         String         @db.VarChar(10)
-  MaMatHang    String         @db.VarChar(10)
+model factdathang {
+  id           Int          @id @default(autoincrement())
+  MaDon        String       @db.VarChar(10)
+  MaKH         String       @db.VarChar(10)
+  MaMatHang    String       @db.VarChar(10)
   NgayDatHang  DateTime
   SoLuongDat   Int
-  GiaDat       Decimal        @db.Decimal(10, 2)
+  GiaDat       Decimal      @db.Decimal(10, 2)
+  dimkhachhang dimkhachhang @relation(fields: [MaKH], references: [MaKH], map: "FactDatHang_MaKH_fkey")
+  dimmathang   dimmathang   @relation(fields: [MaMatHang], references: [MaMatHang], map: "FactDatHang_MaMatHang_fkey")
+  dimthoigian  dimthoigian  @relation(fields: [NgayDatHang], references: [Ngay], map: "FactDatHang_NgayDatHang_fkey")
 
-  matHang      DimMatHang     @relation(fields: [MaMatHang], references: [MaMatHang])
-  khachHang    DimKhachHang   @relation(fields: [MaKH], references: [MaKH])
-  thoiGian     DimThoiGian    @relation(fields: [NgayDatHang], references: [Ngay])
-
-  @@id([MaDon, MaMatHang])
+  @@unique([MaDon, MaMatHang], map: "FactDatHang_MaDon_MaMatHang_key")
+  @@index([MaKH], map: "FactDatHang_MaKH_fkey")
+  @@index([MaMatHang], map: "FactDatHang_MaMatHang_fkey")
+  @@index([NgayDatHang], map: "FactDatHang_NgayDatHang_fkey")
 }
 
-// 7. FactTonKho
-model FactTonKho {
-  id              Int           @unique @default(autoincrement())
-  MaMatHang      String         @db.VarChar(10)
-  MaCuaHang      String         @db.VarChar(10)
-  Ngay           DateTime
-  SoLuongTonKho  Int
+model facttonkho {
+  id            Int         @id @default(autoincrement())
+  MaMatHang     String      @db.VarChar(10)
+  MaCuaHang     String      @db.VarChar(10)
+  Ngay          DateTime
+  SoLuongTonKho Int
+  dimcuahang    dimcuahang  @relation(fields: [MaCuaHang], references: [MaCuaHang], map: "FactTonKho_MaCuaHang_fkey")
+  dimmathang    dimmathang  @relation(fields: [MaMatHang], references: [MaMatHang], map: "FactTonKho_MaMatHang_fkey")
+  dimthoigian   dimthoigian @relation(fields: [Ngay], references: [Ngay], map: "FactTonKho_Ngay_fkey")
 
-  matHang        DimMatHang     @relation(fields: [MaMatHang], references: [MaMatHang])
-  cuaHang        DimCuaHang     @relation(fields: [MaCuaHang], references: [MaCuaHang])
-  thoiGian       DimThoiGian    @relation(fields: [Ngay], references: [Ngay])
+  @@unique([MaMatHang, MaCuaHang, Ngay], map: "FactTonKho_MaMatHang_MaCuaHang_Ngay_key")
+  @@index([MaCuaHang], map: "FactTonKho_MaCuaHang_fkey")
+  @@index([Ngay], map: "FactTonKho_Ngay_fkey")
+}
 
-  @@id([MaMatHang, MaCuaHang, Ngay])
+model salesummary {
+  id             Int    @id @default(autoincrement())
+  MaDon          String
+  MaMatHang      String
+  NgayDatHang    String
+  MaKH           String
+  TenKH          String
+  LoaiKH         String
+  TenThanhPho    String
+  MaThanhPho     String
+  Bang           String
+  DiaChiVP       String
+  MoTa           String
+  KichCo         String
+  TrongLuong     String
+  Gia            String
+  SoLuongDat     String
+  GiaDat         String
+  ThanhTien      String
+  Ngay           String
+  NgayTrongThang String
+  Thang          String
+  Quy            String
+  Nam            String
+}
+
+view vw_doanhthu_theongay_makh_mamathang {
+  Ngay           String
+  Thang          String
+  Nam            String
+  MaKH           String
+  TenKH          String
+  LoaiKH         String
+  MaMatHang      String
+  MoTa           String
+  KichCo         String
+  TrongLuong     String
+  Gia            String
+  TenThanhPho    String
+  Bang           String
+  TongSoLuongDat Float?
+  TongDoanhThu   Float?
+
+  @@ignore
+}
+
+enum dimmathang_KichCo {
+  S
+  M
+  L
+  XL
+  XXl
+  XXXL
+}
+
+enum dimkhachhang_LoaiKH {
+  DuLich
+  BuuDien
+  CaHai
+  Khac
 }
