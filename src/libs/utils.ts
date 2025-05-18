@@ -191,3 +191,18 @@ export const tables = [
 
   'vw_doanhthu_theothang_thanhpho_mota',
 ];
+
+export function buildWhereClauseFromFilters(filters: { key: string; value: string[] }[]): string {
+  const conditions: string[] = [];
+
+  for (const filter of filters) {
+    const { key, value } = filter;
+
+    if (!value || value.length === 0) continue;
+
+    const columnConditions = value.map(v => `${key} LIKE '%${v}%'`);
+    conditions.push(`(${columnConditions.join(' OR ')})`);
+  }
+
+  return conditions.length > 0 ? conditions.join(' AND ') : '1=1';
+}
